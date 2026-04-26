@@ -2,7 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));`n*,::after,::before{box-sizing:border-box;margin:0;padding:0;border:0 solid}
+@custom-variant dark (&:is(.dark *));
+*,::after,::before{box-sizing:border-box;margin:0;padding:0;border:0 solid}
 :root{
   --brand:#0cbf6a;--brand-2:#27e089;--brand-3:#5fedac;
   --bg:#0c1216;--bg2:rgba(12,18,22,0.95);--bg3:rgba(255,255,255,0.05);
