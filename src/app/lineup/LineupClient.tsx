@@ -72,8 +72,8 @@ export default function LineupClient({ players }: { players: Player[] }) {
   // Court layout: positions 0-5 map to slots P1-P6
   // P1 P2 P3 (net side, opponent half)
   // P6 P5 P4 (our half, back row)
-  const netRow = [0, 1, 2]; // P1, P2, P3
-  const backRow = [5, 4, 3]; // P6, P5, P4
+  const netRow = [3, 2, 1]; // P1, P2, P3
+  const backRow = [4, 5, 0]; // P6, P5, P4
 
   return (
     <>
