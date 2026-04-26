@@ -80,6 +80,9 @@ export default function PlayersClient({ initialPlayers }: { initialPlayers: any[
         if (!uploadError && uploadData) {
           const { data: publicUrlData } = supabase.storage.from("fotos-jogadores").getPublicUrl(slug);
           finalFotoUrl = publicUrlData.publicUrl;
+          console.log("Foto salva em:", finalFotoUrl);
+        } else {
+          console.error("Erro no upload:", uploadError);
         }
       }
 
@@ -111,6 +114,18 @@ export default function PlayersClient({ initialPlayers }: { initialPlayers: any[
     }
   };
 
+  const deletePlayer = async (id: string, nome: string) => {
+    if (!confirm(`Deseja realmente excluir o jogador ${nome}?`)) return;
+    
+    try {
+      const { error } = await supabase.from("jogadores_leilao").delete().eq("id", id);
+      if (error) throw error;
+      setPlayers((prev) => prev.filter((p) => p.id !== id));
+    } catch (e: any) {
+      alert("Erro ao excluir: " + e.message);
+    }
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setNome(""); setApelido(""); setPosicao(""); setCamisa("");
@@ -137,7 +152,7 @@ export default function PlayersClient({ initialPlayers }: { initialPlayers: any[
                     {p.foto_url ? (
                       <img src={p.foto_url} alt={p.nome} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <span className="player-photo-placeholder">👤</span>
+                      <div className="player-photo-placeholder" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg3)', borderRadius: '12px', fontSize: '24px' }}>👤</div>
                     )}
                   </div>
                   <div className="player-info">
@@ -150,6 +165,22 @@ export default function PlayersClient({ initialPlayers }: { initialPlayers: any[
                       <div className="skill-badge skill-mid"><span className="sk-lbl">CAMISA:</span> {p.camisa || '--'}</div>
                     </div>
                   </div>
+                </div>
+                <div className="player-right">
+                  <button 
+                    className="btn-icon" 
+                    onClick={() => deletePlayer(p.id, p.nome)}
+                    title="Excluir Jogador"
+                    style={{ color: 'var(--red)', borderColor: 'rgba(255, 59, 48, 0.2)', background: 'rgba(255, 59, 48, 0.05)' }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6l-1 14H6L5 6"></path>
+                      <path d="M10 11v6"></path>
+                      <path d="M14 11v6"></path>
+                      <path d="M9 6V4h6v2"></path>
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
