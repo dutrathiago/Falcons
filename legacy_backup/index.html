@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Falcons - Atlética FAP | Gestão de Vôlei</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="toast"></div>
+
+  <nav id="sidebar">
+    <div class="sidebar-brand">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='100%25' height='100%25' rx='40' fill='%231a7a3c'/%3E%3Ctext x='50%25' y='56%25' text-anchor='middle' fill='white' font-family='Arial' font-size='28' font-weight='700'%3EF%3C/text%3E%3C/svg%3E" alt="Falcons">
+      <div class="brand-text">
+        <div class="brand-name">FALCONS</div>
+        <div class="brand-sub">ATLÉTICA · FAP</div>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Menu</div>
+      <div class="nav-item active" onclick="navigate('dashboard')"><span>Dashboard</span></div>
+      <div class="nav-item" onclick="navigate('players')"><span>Jogadores</span></div>
+      <div class="nav-item" onclick="navigate('lineup')"><span>Escalação</span></div>
+      <div class="nav-item" onclick="navigate('statistics')"><span>Estatísticas</span></div>
+      <div class="nav-item" onclick="navigate('games')"><span>Jogos</span></div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="season-badge">Temporada <span>2024/25</span></div>
+    </div>
+  </nav>
+
+  <div id="main">
+    <div class="top-bar">
+      <div class="top-title" id="page-title">Dashboard</div>
+      <div class="top-actions">
+        <button class="btn btn-primary" id="main-action-btn" onclick="mainAction()" style="display:none; border: 1.5px solid #fff;">
+          <span id="main-action-label">Adicionar</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number" id="dash-total-players">0</div><div class="stat-label">Jogadores</div></div>
+        <div class="stat-card"><div class="stat-number color-win" id="dash-wins">0</div><div class="stat-label">Vitórias</div></div>
+        <div class="stat-card"><div class="stat-number color-loss" id="dash-losses">0</div><div class="stat-label">Derrotas</div></div>
+        <div class="stat-card"><div class="stat-number color-draw" id="dash-games">0</div><div class="stat-label">Jogos</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+        <div class="card"><div class="card-title">Top Recebedores (Passe)</div><div class="bar-chart" id="dash-pass-chart"></div></div>
+        <div class="card"><div class="card-title">Últimos Resultados</div><div id="dash-recent-games"></div></div>
+      </div>
+      <div class="card"><div class="card-title">Posições no Plantel</div><div id="dash-positions" style="display:flex;flex-wrap:wrap;gap:10px"></div></div>
+    </div>
+
+    <div class="page" id="page-players">
+      <div class="players-grid" id="players-grid"></div>
+      <div id="no-players" style="display:none;text-align:center;padding:60px 0;color:var(--text2)">
+        <div style="font-size:48px;margin-bottom:12px">🏐</div>
+        <div style="font-size:16px;font-weight:500;color:#fff">Nenhum jogador cadastrado</div>
+      </div>
+    </div>
+
+    <div class="page" id="page-lineup">
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+        <div>
+          <div class="card" style="margin-bottom:14px;padding:14px 16px">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div style="font-size:12px;color:var(--text2)">Rotação:</div>
+              <div style="display:flex;gap:6px" id="rotation-selector">
+                <button class="btn btn-sm btn-secondary active-rot" onclick="setRotation(1)" data-r="1">Rot 1</button>
+                <button class="btn btn-sm btn-secondary" onclick="setRotation(2)" data-r="2">Rot 2</button>
+                <button class="btn btn-sm btn-secondary" onclick="setRotation(3)" data-r="3">Rot 3</button>
+                <button class="btn btn-sm btn-secondary" onclick="setRotation(4)" data-r="4">Rot 4</button>
+                <button class="btn btn-sm btn-secondary" onclick="setRotation(5)" data-r="5">Rot 5</button>
+                <button class="btn btn-sm btn-secondary" onclick="setRotation(6)" data-r="6">Rot 6</button>
+              </div>
+              <button class="btn btn-sm btn-danger" onclick="clearLineup()" style="margin-left:auto">Limpar</button>
+            </div>
+          </div>
+          <div id="court-container" class="card" style="padding:12px">
+            <div style="font-size:11px;color:var(--text2);margin-bottom:8px;text-align:center;text-transform:uppercase;letter-spacing:.8px">Quadra — Rotação <span id="cur-rotation">1</span></div>
+            <div class="court" id="volleyball-court">
+              <div class="court-net"></div>
+              <div style="position:absolute;top:0;left:0;right:0;bottom:50%;display:grid;grid-template-columns:1fr 1fr 1fr">
+                <div class="court-slot" id="slot-1" onclick="slotClick(1)"><div class="slot-label">P1</div></div>
+                <div class="court-slot" id="slot-2" onclick="slotClick(2)"><div class="slot-label">P2</div></div>
+                <div class="court-slot" id="slot-3" onclick="slotClick(3)"><div class="slot-label">P3</div></div>
+              </div>
+              <div style="position:absolute;top:50%;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 1fr 1fr">
+                <div class="court-slot" id="slot-4" onclick="slotClick(4)"><div class="slot-label">P4</div></div>
+                <div class="court-slot" id="slot-5" onclick="slotClick(5)"><div class="slot-label">P5</div></div>
+                <div class="court-slot" id="slot-6" onclick="slotClick(6)"><div class="slot-label">P6</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="lineup-panel"><div class="card-title" style="margin-bottom:12px">Banco / Seleção</div><div id="bench-list"></div></div>
+          <div class="lineup-panel" style="margin-top:14px"><div class="card-title" style="margin-bottom:10px">Escalação Atual</div><div id="lineup-summary"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-statistics">
+      <div class="tabs" id="stats-tabs">
+        <div class="tab active" onclick="switchStatsTab('team')">Time</div>
+        <div class="tab" onclick="switchStatsTab('players')">Jogadores</div>
+        <div class="tab" onclick="switchStatsTab('pass')">Recepção/Passe</div>
+      </div>
+      <div id="stats-team">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px">
+          <div class="stat-card"><div class="stat-number color-win" id="st-wins">0</div><div class="stat-label">Vitórias</div></div>
+          <div class="stat-card"><div class="stat-number color-loss" id="st-losses">0</div><div class="stat-label">Derrotas</div></div>
+          <div class="stat-card"><div class="stat-number" id="st-wr">0%</div><div class="stat-label">Aproveitamento</div></div>
+        </div>
+        <div class="card"><div class="card-title">Histórico de Jogos</div><div id="st-game-history"></div></div>
+      </div>
+      <div id="stats-players" style="display:none"><div class="card"><div class="card-title">Estatísticas por Jogador</div><table><tbody id="player-stats-body"></tbody></table></div></div>
+      <div id="stats-pass" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="card"><div class="card-title">Registrar Passe</div><select class="form-select" id="pass-player-select"></select><div class="pass-btn-group" style="margin-top:10px"><button class="pass-btn pass-btn-a" onclick="registerPass('A')">A</button><button class="pass-btn pass-btn-b" onclick="registerPass('B')">B</button><button class="pass-btn pass-btn-c" onclick="registerPass('C')">C</button></div><div id="pass-feedback"></div></div>
+          <div class="card"><div class="card-title">Ranking de Recepção</div><div class="bar-chart" id="pass-ranking"></div></div>
+        </div>
+        <div class="card" style="margin-top:16px"><div class="card-title">Histórico de Passes por Jogador</div><div id="pass-detail-list"></div></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-games">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card"><div class="card-title">Todos os Jogos</div><div id="all-games-list"></div><div id="no-games" style="display:none">Nenhum jogo cadastrado</div></div>
+        <div class="card">
+          <div class="card-title">Registrar Resultado</div>
+          <input type="date" class="form-input" id="g-date">
+          <input type="text" class="form-input" id="g-opponent" placeholder="Adversário" style="margin-top:10px">
+          <input type="text" class="form-input" id="g-location" placeholder="Local" style="margin-top:10px">
+          <div class="form-row" style="margin-top:10px">
+            <input type="number" class="form-input" id="g-score-us" value="0" min="0" max="5">
+            <input type="number" class="form-input" id="g-score-them" value="0" min="0" max="5">
+          </div>
+          <input type="text" class="form-input" id="g-notes" placeholder="Observações" style="margin-top:10px">
+          <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="saveGame()">Salvar Jogo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="player-modal">
+    <div class="modal">
+      <div class="modal-title"><span id="modal-player-title">Adicionar Jogador</span><button class="modal-close" onclick="closePlayerModal()">×</button></div>
+      
+      <div style="display:flex; gap:16px; margin-bottom:16px; align-items:flex-start;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+          <div id="p-photo-preview" style="width:120px; height:120px; border-radius:12px; background:var(--bg3); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; overflow:hidden; font-size:32px; color:var(--text2)">👤</div>
+          <label class="btn btn-sm btn-secondary" style="cursor:pointer; font-size:11px;">
+            Escolher Foto
+            <input type="file" id="p-photo" accept="image/*" style="display:none" onchange="previewPlayerPhoto(this)">
+          </label>
+          <div style="font-size:10px; color:var(--text3)">Max 170x170</div>
+        </div>
+        
+        <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+          <input type="text" class="form-input" id="p-fullname" placeholder="Nome Completo">
+          <input type="text" class="form-input" id="p-nickname" placeholder="Apelido">
+          <div class="form-row">
+            <select class="form-select" id="p-position">
+              <option value="" disabled selected>Posição</option>
+              <option value="Levantador">Levantador</option>
+              <option value="Oposto">Oposto</option>
+              <option value="Central">Central</option>
+              <option value="Ponteiro">Ponteiro</option>
+              <option value="Libero">Líbero</option>
+            </select>
+            <input type="number" class="form-input" id="p-number" placeholder="Camisa (00-99)" min="0" max="99">
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-row" style="margin-top:10px">
+        <div style="position:relative">
+          <input type="date" class="form-input" id="p-birthdate" onchange="calcAge()" title="Data de Nascimento">
+          <span id="p-age" style="position:absolute; right:12px; top:10px; font-size:12px; font-weight:600; color:var(--brand-3); pointer-events:none"></span>
+        </div>
+        <input type="text" class="form-input" id="p-cpf" placeholder="CPF" oninput="maskCPF(this)">
+      </div>
+      
+      <div class="form-row" style="margin-top:10px">
+        <input type="text" class="form-input" id="p-phone" placeholder="Telefone" oninput="maskPhone(this)">
+        <input type="text" class="form-input" id="p-course" placeholder="Curso">
+      </div>
+      
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn btn-secondary" style="flex:1" onclick="closePlayerModal()">Cancelar</button>
+        <button class="btn btn-primary" id="save-player-btn" style="flex:1" onclick="savePlayer()">Salvar Jogador</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
