@@ -1,0 +1,32 @@
+
+> falcons-app@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://26.34.230.23:3000
+- Environments: .env.local
+✓ Ready in 291ms
+
+ GET /dashboard 200 in 1252ms (next.js: 1122ms, application-code: 130ms)
+ GET / 307 in 237ms (next.js: 202ms, application-code: 36ms)
+ GET /dashboard 200 in 27ms (next.js: 6ms, application-code: 21ms)
+ GET /players 200 in 1348ms (next.js: 3ms, application-code: 1345ms)
+ GET /players 200 in 2.2s (next.js: 717ms, application-code: 1464ms)
+ GET /players 200 in 623ms (next.js: 6ms, application-code: 617ms)
+ GET /dashboard 200 in 31ms (next.js: 5ms, application-code: 26ms)
+ GET /players 200 in 119ms (next.js: 4ms, application-code: 115ms)
+ GET /lineup 200 in 636ms (next.js: 398ms, application-code: 237ms)
+ GET /lineup 200 in 97ms (next.js: 6ms, application-code: 90ms)
+ GET /players 200 in 96ms (next.js: 5ms, application-code: 91ms)
+ GET /dashboard 200 in 42ms (next.js: 6ms, application-code: 36ms)
+ GET /players 200 in 222ms (next.js: 4ms, application-code: 218ms)
+ GET /lineup 200 in 125ms (next.js: 6ms, application-code: 119ms)
+ GET /statistics 200 in 602ms (next.js: 389ms, application-code: 212ms)
+ GET /dashboard 200 in 27ms (next.js: 5ms, application-code: 21ms)
+ GET /players 200 in 192ms (next.js: 6ms, application-code: 186ms)
+ GET /lineup 200 in 108ms (next.js: 8ms, application-code: 100ms)
+ GET /statistics 200 in 179ms (next.js: 5ms, application-code: 174ms)
+ GET /games 200 in 473ms (next.js: 382ms, application-code: 91ms)
+ GET /dashboard 200 in 29ms (next.js: 5ms, application-code: 24ms)
+ GET /players 200 in 163ms (next.js: 5ms, application-code: 158ms)
