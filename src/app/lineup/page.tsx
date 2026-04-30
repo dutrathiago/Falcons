@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/backend/lib/server";
 import LineupClient from "./LineupClient";
 
 export default async function LineupPage() {
@@ -8,9 +8,5 @@ export default async function LineupPage() {
     .select("id, nome, posicao, camisa, foto_url")
     .order("nome");
 
-  return (
-    <div className="page active">
-      <LineupClient players={players || []} />
-    </div>
-  );
+  return <LineupClient players={players || []} />;
 }

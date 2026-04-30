@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/backend/lib/server";
 import GamesClient from "./GamesClient";
 
 export default async function GamesPage() {
@@ -8,9 +8,5 @@ export default async function GamesPage() {
     .select("*")
     .order("data", { ascending: false });
 
-  return (
-    <div className="page active">
-      <GamesClient initialGames={games || []} />
-    </div>
-  );
+  return <GamesClient initialGames={games || []} />;
 }

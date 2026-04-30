@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
-import { Oswald, DM_Sans, Geist } from "next/font/google";
+import { DM_Sans, Oswald } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
-import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+import Sidebar from "@/frontend/components/Sidebar";
+import { SidebarProvider } from "@/frontend/components/SidebarContext";
+import { cn } from "@/backend/lib/utils";
 
 const oswald = Oswald({
-  variable: "--font-oswald",
+  variable: "--font-heading",
   subsets: ["latin"],
 });
 
 const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+  variable: "--font-body",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Falcons - Atlética FAP | Gestão de Vôlei",
-  description: "Sistema de Gestão de Vôlei - Falcons",
+  title: "Falcons Volei | Gestao da Atletica",
+  description:
+    "Plataforma para gerenciar elenco, estatisticas, jogos e escalacoes da Atletica Falcons.",
 };
 
 export default function RootLayout({
@@ -27,13 +27,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={cn("font-sans", geist.variable)}>
-      <body className={`${oswald.variable} ${dmSans.variable}`}>
-        <div id="toast"></div>
-        <Sidebar />
-        <div id="main">
-          {children}
-        </div>
+    <html lang="pt-BR" className={cn(oswald.variable, dmSans.variable)}>
+      <body>
+        <SidebarProvider>
+          <Sidebar />
+          <div className="app-shell">
+            <div className="app-gradient" />
+            <main className="app-main">{children}</main>
+          </div>
+        </SidebarProvider>
       </body>
     </html>
   );
