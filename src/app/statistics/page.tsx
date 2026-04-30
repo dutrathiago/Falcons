@@ -3,15 +3,18 @@ import StatisticsClient from "./StatisticsClient";
 
 export default async function StatisticsPage() {
   const supabase = await createClient();
-  const [{ data: games }, { data: players }] = await Promise.all([
-    supabase.from("jogos").select("*").order("data", { ascending: false }),
-    supabase
-      .from("jogadores_leilao")
-      .select("id, nome, posicao, camisa, altura")
-      .order("nome"),
-  ]);
+  const [{ data: events }, { data: players }, { data: performance }] =
+    await Promise.all([
+      supabase.from("jogos").select("*").order("data", { ascending: false }),
+      supabase.from("jogadores_leilao").select("*").order("nome"),
+      supabase.from("estatisticas_individuais").select("*"),
+    ]);
 
   return (
-    <StatisticsClient initialGames={games || []} players={players || []} />
+    <StatisticsClient
+      initialEvents={events || []}
+      players={players || []}
+      initialPerformance={performance || []}
+    />
   );
 }

@@ -8,5 +8,5 @@ export default async function GamesPage() {
     .select("*")
     .order("data", { ascending: false });
 
-  return <GamesClient initialGames={games || []} />;
+  return <GamesClient initialEvents={games || []} />;
 }

@@ -1,14 +1,16 @@
 import { createClient } from "@/backend/lib/server";
 import TopBar from "@/frontend/components/TopBar";
+import Image from "next/image";
 import {
-  Activity,
   ArrowUp,
   CalendarClock,
+  Sparkles,
   ShieldCheck,
   Trophy,
   Users,
 } from "lucide-react";
 import {
+  getEventTitle,
   formatMatchDate,
   getAverageAge,
   getAverageHeight,
@@ -17,31 +19,38 @@ import {
   getRecentGames,
   getResult,
   getSetBalance,
+  getTeamOverall,
   getUpcomingGames,
   getWinRate,
+  groupPerformanceByPlayer,
+  isCompetitiveEvent,
 } from "@/shared/lib/volleyball";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const [{ data: players }, { data: games }] = await Promise.all([
+  const [{ data: players }, { data: events }, { data: performance }] = await Promise.all([
     supabase.from("jogadores_leilao").select("*").order("nome"),
     supabase.from("jogos").select("*").order("data", { ascending: false }),
+    supabase.from("estatisticas_individuais").select("*"),
   ]);
 
   const roster = players || [];
-  const matches = games || [];
+  const schedule = events || [];
+  const performanceByPlayer = groupPerformanceByPlayer(performance || []);
+  const matches = schedule.filter(isCompetitiveEvent);
 
-  const wins = matches.filter((game) => getResult(game) === "win").length;
-  const losses = matches.filter((game) => getResult(game) === "loss").length;
-  const draws = matches.filter((game) => getResult(game) === "draw").length;
   const positionGroups = getPositionGroups(roster);
   const recentGames = getRecentGames(matches, 4);
-  const upcomingGames = getUpcomingGames(matches).slice(0, 3);
+  const upcomingGames = getUpcomingGames(schedule).slice(0, 3);
   const averageHeight = getAverageHeight(roster);
   const averageAge = getAverageAge(roster);
   const setBalance = getSetBalance(matches);
+  const teamOverall = getTeamOverall(roster, performanceByPlayer);
   const availability = roster.filter(
-    (player) => !player.status || player.status === "DISPONIVEL",
+    (player) =>
+      !player.status ||
+      player.status === "DISPONIVEL" ||
+      player.status === "ATIVO",
   ).length;
 
   return (
@@ -51,6 +60,35 @@ export default async function DashboardPage() {
         badge="Temporada 2026"
         description="Uma leitura rapida do elenco, da agenda competitiva e do momento tecnico do time para tomar decisoes melhores no dia a dia."
       />
+
+      <section className="dashboard-hero-banner">
+        <div className="dashboard-hero-media">
+          <Image
+            src="/falcons-team-hero.jpg"
+            alt="Time Falcons Volei em quadra"
+            fill
+            priority
+            sizes="(max-width: 720px) 100vw, (max-width: 1360px) 92vw, 1200px"
+            className="dashboard-hero-image"
+          />
+          <div className="dashboard-hero-overlay" />
+        </div>
+
+        <div className="dashboard-hero-content">
+          <span className="page-hero-kicker">Orgulho da Atletica FAP</span>
+          <h2>Falcons Volei pronto para dominar a temporada</h2>
+          <p>
+            Time unido, mentalidade forte e operacao orientada por dados para
+            elevar cada treino e cada jogo.
+          </p>
+          <div className="dashboard-hero-meta">
+            <span className="status-badge success">Foco total 2026</span>
+            <span className="status-badge neutral">
+              Abrir o app = entrar no modo competicao
+            </span>
+          </div>
+        </div>
+      </section>
 
       <section className="stats-grid">
         <article className="stat-card">
@@ -71,7 +109,7 @@ export default async function DashboardPage() {
           </div>
           <div className="stat-number">{getWinRate(matches)}%</div>
           <div className="stat-trend">
-            {wins} vitorias, {losses} derrotas e {draws} empates
+            {matches.length} jogos competitivos avaliados
           </div>
         </article>
 
@@ -88,12 +126,12 @@ export default async function DashboardPage() {
 
         <article className="stat-card">
           <div className="stat-card-header">
-            <span className="stat-label">Perfil medio</span>
-            <Activity size={18} className="tone-warning" />
+            <span className="stat-label">Overall da atletica</span>
+            <Sparkles size={18} className="tone-warning" />
           </div>
-          <div className="stat-number">{averageHeight || "--"} cm</div>
+          <div className="stat-number">{teamOverall || "--"}</div>
           <div className="stat-trend">
-            Idade media {averageAge || "--"} anos
+            Altura media {averageHeight || "--"} cm · idade media {averageAge || "--"} anos
           </div>
         </article>
       </section>
@@ -155,7 +193,7 @@ export default async function DashboardPage() {
                 <div key={game.id} className="list-item">
                   <div className="status-badge neutral">Agenda</div>
                   <div className="list-item-meta">
-                    <strong>Falcons x {game.adversario}</strong>
+                    <strong>{getEventTitle(game)}</strong>
                     <span>
                       {formatMatchDate(game.data, true)}
                       {game.local ? ` · ${game.local}` : ""}
@@ -181,7 +219,7 @@ export default async function DashboardPage() {
               Elenco ativo <strong>{availability}</strong>
             </span>
             <span className="chip">
-              Jogos registrados <strong>{matches.length}</strong>
+              Eventos registrados <strong>{schedule.length}</strong>
             </span>
             <span className="chip">
               Posicoes mapeadas <strong>{positionGroups.length}</strong>
@@ -191,11 +229,11 @@ export default async function DashboardPage() {
           <div className="summary-stack" style={{ marginTop: 18 }}>
             <div className="summary-row">
               <span>Melhor uso do painel</span>
-              <strong>acompanhar disponibilidade, rotacoes e resultados</strong>
+              <strong>acompanhar disponibilidade, agenda e performance</strong>
             </div>
             <div className="summary-row">
               <span>Boa proxima camada de conteudo</span>
-              <strong>carga de treino, presenca e lesoes</strong>
+              <strong>presenca, carga de treino e observacoes tecnicas</strong>
             </div>
             <div className="summary-row">
               <span>Leitura rapida do elenco</span>
@@ -242,8 +280,10 @@ export default async function DashboardPage() {
                     </span>
                     <div className="list-item-meta">
                       <strong>
-                        Falcons {game.placar_nos} x {game.placar_eles}{" "}
-                        {game.adversario}
+                        {getEventTitle(game)}
+                        {game.placar_nos != null && game.placar_eles != null
+                          ? ` · ${game.placar_nos} x ${game.placar_eles}`
+                          : ""}
                       </strong>
                       <span>
                         {formatMatchDate(game.data)}

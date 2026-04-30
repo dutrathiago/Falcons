@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "./SidebarContext";
 import {
@@ -9,7 +10,6 @@ import {
   ChevronLeft,
   LayoutDashboard,
   Menu,
-  Shield,
   Users,
   Volleyball,
 } from "lucide-react";
@@ -71,7 +71,14 @@ export default function Sidebar() {
         <div className="sidebar-shell">
           <div className="sidebar-brand">
             <div className="sidebar-brand-mark">
-              <Shield size={18} />
+              <Image
+                src="/falcons-volley-logo.png"
+                alt="Logo Falcons Volei"
+                width={36}
+                height={36}
+                className="sidebar-brand-logo"
+                priority
+              />
             </div>
             <div className="sidebar-brand-copy">
               <strong>Falcons Volei</strong>
