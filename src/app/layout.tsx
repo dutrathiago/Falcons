@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Oswald } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import Sidebar from "@/frontend/components/Sidebar";
 import { SidebarProvider } from "@/frontend/components/SidebarContext";
@@ -35,6 +36,7 @@ export default function RootLayout({
             <div className="app-gradient" />
             <main className="app-main">{children}</main>
           </div>
+          <SpeedInsights />
         </SidebarProvider>
       </body>
     </html>
